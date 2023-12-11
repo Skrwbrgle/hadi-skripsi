@@ -15,7 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+
+        $users = User::all();
+        return view('admin/home', ["Users" => $users]);
     }
 
     /**
@@ -47,7 +49,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return view('admin/userView', ["User" => $user]);
     }
 
     /**

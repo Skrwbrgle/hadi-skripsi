@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +14,23 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// ADMIN ROUTES
+// Route::resource('users', UserController::class);
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('admin/home', [
+        "title" => "Users",
+        "users" => User::all()
+    ]);
+});
+
+Route::get('/users/{id}', function ($id) {
+    return view('admin/userView', [
+        "title" => "User View",
+        "users" => User::find($id)
+    ]);
+});
+
+Route::get('/customers', function () {
+    return view('admin/customer');
 });

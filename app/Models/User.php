@@ -10,4 +10,9 @@ class User extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function rute()
+    {
+        return $this->hasMany(Rute::class);
+    }
 }

@@ -15,13 +15,10 @@ class CreateTransaksisTable extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
-            $table->string('password');
-            $table->string('nama');
-            $table->string('alamat');
-            $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
-            $table->integer('nik');
-            $table->integer('no_telepon');
+            $table->foreignId('rute_id');
+            $table->foreignId('penumpang_id');
+            $table->integer('jumlah_penumpang');
+            $table->integer('total');
             $table->timestamps();
         });
     }

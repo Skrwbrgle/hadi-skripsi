@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Penumpang;
 use Illuminate\Database\Seeder;
 
-class PenumpangSeeder extends Seeder
+class RuteSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +13,6 @@ class PenumpangSeeder extends Seeder
      */
     public function run()
     {
-        // Penumpang::factory(20)->create();
+        //
     }
 }

@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('nama_agen_travel')->nullable();
-            $table->integer('no_telepon')->nullable();
+            $table->bigInteger('no_telepon')->nullable();
             $table->string('alamat')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->timestamps();

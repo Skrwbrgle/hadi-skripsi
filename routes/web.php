@@ -15,22 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // ADMIN ROUTES
-// Route::resource('users', UserController::class);
+Route::get('/', [UserController::class, 'index']);
+Route::get('/users/{user}', [UserController::class, 'show']);
 
-Route::get('/', function () {
-    return view('admin/home', [
-        "title" => "Users",
-        "users" => User::all()
-    ]);
-});
 
-Route::get('/users/{id}', function ($id) {
-    return view('admin/userView', [
-        "title" => "User View",
-        "users" => User::find($id)
-    ]);
-});
 
-Route::get('/customers', function () {
-    return view('admin/customer');
-});
+
+// Route::get('/customers', function () {
+//     return view('admin/customer');
+// });

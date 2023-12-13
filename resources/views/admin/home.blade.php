@@ -66,7 +66,7 @@
                             <th>id</th>
                             <th>username</th>
                             <th>name</th>
-                            <th>created</th>
+                            <th>registered</th>
                             <th>phone number</th>
                             <th>role</th>
                             <th>status</th>
@@ -80,22 +80,22 @@
 
                             <tr>
                                 <td></td>
-                                <td>{{ $user["id"] }}</td>
-                                <td><a href="/users/{{ $user["id"] }}">{{ $user["username"] }}</a>
+                                <td>{{ $user->id }}</td>
+                                <td><a href="/users/{{ $user->id }}">{{ $user->username }}</a>
                                 </td>
-                                <td>{{ $user["nama_agen_travel"] }}</td>
-                                <td>{{ $user["created_at"] }}</td>
-                                <td>{{ $user["no_telepon"] !== null ? $user["no_telepon"] : "-" }}</td>
-                                <td>{{ $user["is_admin"] ? 'Admin':'Agent travel' }}</td>
+                                <td>{{ $user->nama_agen_travel }}</td>
+                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y H:i') }}</td>
+                                <td>{{ $user->no_telepon !== null ? $user->no_telepon : "-" }}</td>
+                                <td>{{ $user->is_admin ? 'Admin':'Agent travel' }}</td>
                                 <td>
-                                    @if($user["is_admin"])
+                                    @if($user->is_admin)
                                         <span class="chip green lighten-5"><span class="green-text">Absolute</span></span>
                                     @else
                                         <span class="chip red lighten-5"><span class="red-text">User</span></span>
                                     @endif
                                 </td>
                                 <td><a href="page-users-edit.html"><i class="material-icons">edit</i></a></td>
-                                <td><a href="/users/{{ $user["id"] }}"><i class="material-icons">remove_red_eye</i></a></td>
+                                <td><a href="/users/{{ $user->id }}"><i class="material-icons">remove_red_eye</i></a></td>
                             </tr>
                         @endforeach
                         </tbody>

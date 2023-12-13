@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHistoriesTable extends Migration
+class CreateRutesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('histories', function (Blueprint $table) {
+        Schema::create('rutes', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id');
-            $table->string('nama_penumpang');
-            $table->string('tujuan');
-            $table->timestamp('tanggal');
-            $table->time('jam');
+            $table->string('rute');
+            $table->time('jam_keberangkatan');
             $table->integer('tarif');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('histories');
+        Schema::dropIfExists('rutes');
     }
 }

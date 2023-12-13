@@ -15,13 +15,13 @@ class CreatePenumpangsTable extends Migration
     {
         Schema::create('penumpangs', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('password');
             $table->string('nama');
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
             $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
-            $table->integer('nik');
-            $table->integer('no_telepon');
+            $table->bigInteger('nik')->unique();
+            $table->bigInteger('no_telepon')->unique()->nullable();
             $table->timestamps();
         });
     }

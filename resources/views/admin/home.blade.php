@@ -94,7 +94,7 @@
                                         <span class="chip red lighten-5"><span class="red-text">User</span></span>
                                     @endif
                                 </td>
-                                <td><a href="page-users-edit.html"><i class="material-icons">edit</i></a></td>
+                                <td><a href="/users/edit/{{ $user->id }}"><i class="material-icons">edit</i></a></td>
                                 <td><a href="/users/{{ $user->id }}"><i class="material-icons">remove_red_eye</i></a></td>
                             </tr>
                         @endforeach

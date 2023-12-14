@@ -48,8 +48,12 @@
                     </div>
                 </div>
                 <div class="col s12 m5 quick-action-btns display-flex justify-content-end align-items-center pt-2">
-                    <a href="user-profile-page.html" class="btn-small btn-light-indigo">Edit</a>
-                    <a href="page-users-edit.html" class="btn-small red">Delete</a>
+                    <a href="/user/edit/{{ $user->id }}" class="btn-small btn-light-indigo">Edit</a>
+                    <form action="/users/delete/{{ $user->id }}" method="post" class="{{ $user->is_admin ? 'd-inline ml-3 hide' : 'd-inline ml-3' }}">
+                        @method('delete')
+                        @csrf
+                            <button class="btn-small red" onclick="confirmDelete(event)">Delete</button>
+                    </form>
                 </div>
                 </div>
             </div>

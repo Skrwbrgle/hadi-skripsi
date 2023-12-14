@@ -10,6 +10,8 @@
     <meta name="keywords" content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
     <meta name="author" content="ThemeSelect">
     <title>E-Travelize</title>
+    <!-- resources/views/layouts/app.blade.php atau header.blade.php -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link rel="apple-touch-icon" href="../../../app-assets/images/favicon/apple-touch-icon-152x152.png">
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/favicon/favicon-32x32.png">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -32,6 +34,7 @@
 
     <!-- BEGIN: Header-->
     @include('components.header')
+    {{-- @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"]) --}}
     <!-- END: Header-->
 
     <ul class="display-none" id="default-search-main">
@@ -156,6 +159,7 @@
 
 
     {{-- custom js --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Ambil URL saat ini
@@ -167,7 +171,66 @@
             activeElement.classList.add('active');
         }
     });
-</script>
+
+    function confirmDelete(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                event.target.form.submit();
+            }
+        });
+    }
+
+    function confirmEdit(event) {
+        event.preventDefault();
+         var passwordInput = document.getElementById('password');
+        var rePasswordInput = document.getElementById('re-password');
+
+        if (passwordInput.value !== rePasswordInput.value) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Password and Re-Password must match!',
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: 'btn indigo',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                event.target.form.submit();
+            }
+        });
+    }
+
+    </script>
+
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+    @endif
 </body>
 
 </html>

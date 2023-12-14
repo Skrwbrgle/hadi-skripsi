@@ -5,6 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Validation\Rule as ValidationRule;
+
+$rules = [
+    'username' => 'required|string',
+    'nama_agen_travel' => 'required|string',
+    'no_telepon' => 'required|string',
+    'alamat' => 'required|string',
+];
 
 class UserController extends Controller
 {
@@ -50,10 +58,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('admin/userView', [
-            "title" => "User View",
-            "user" => $user
-        ]);
+        return view('admin/userView', ["user" => $user]);
     }
 
     /**
@@ -64,7 +69,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('admin/userEdit', ["user" => $user]);
     }
 
     /**
@@ -76,7 +81,23 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        if ($request->filled('password')) {
+            $rules['password'] = 'required|min:8|confirmed';
+        }
+
+        $rules['password_confirmation'] = [
+            'required',
+            ValidationRule::in([$request->password]),
+        ];
+
+        $request->validate($rules);
+        User::where('id', $user->id)->update([
+            'username' => $request->username,
+            'nama_agen_travel' => $request->nama_agen_travel,
+            'no_telepon' => $request->no_telepon,
+            'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
+        ]);
+        return redirect()->back()->with('success', $user->nama_agen_travel . ' has been updated!');
     }
 
     /**
@@ -87,6 +108,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        User::destroy($user->id);
+        return redirect('/')->with('success', $user->nama_agen_travel . ' has been deleted!');
     }
 }

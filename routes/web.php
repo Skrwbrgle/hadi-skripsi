@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,17 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// AUTH
+Route::get('/login', [LoginController::class, 'index']);
+Route::get('/register', [RegisterController::class, 'index']);
+Route::post('/register', [RegisterController::class, 'create']);
+
 // ADMIN ROUTES
 Route::get('/', [UserController::class, 'index']);
 Route::get('/users/{user}', [UserController::class, 'show']);
+Route::get('/users/edit/{user}', [UserController::class, 'edit']);
+Route::delete('/users/delete/{user}', [UserController::class, 'destroy']);
+Route::put('/users/update/{user}', [UserController::class, 'update']);
 
 
 

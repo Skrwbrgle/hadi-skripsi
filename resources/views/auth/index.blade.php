@@ -26,7 +26,6 @@ License: You must have a valid license purchased only from themeforest(the above
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- BEGIN: VENDOR CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/vendors.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <!-- END: VENDOR CSS-->
     <!-- BEGIN: Page Level CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/themes/vertical-modern-menu-template/materialize.css">
@@ -39,12 +38,60 @@ License: You must have a valid license purchased only from themeforest(the above
   </head>
   <!-- END: Head-->
   <body class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu preload-transitions 1-column login-bg   blank-page blank-page" data-open="click" data-menu="vertical-modern-menu" data-col="1-column">
-
     <div class="row">
-      @yield('author')
-      <div class="content-overlay"></div>
+      <div class="col s12">
+        <div class="container"><div id="login-page" class="row">
+            <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">
+                <form class="login-form">
+                <div class="row">
+                    <div class="input-field col s12">
+                    <h5 class="ml-4">Sign in</h5>
+                    </div>
+                </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                    <i class="material-icons prefix pt-2">person_outline</i>
+                    <input id="username" type="text">
+                    <label for="username" class="center-align">Username</label>
+                    </div>
+                </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                    <i class="material-icons prefix pt-2">lock_outline</i>
+                    <input id="password" type="password">
+                    <label for="password">Password</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m12 l12 ml-2 mt-1">
+                    <p>
+                        <label>
+                        <input type="checkbox" />
+                        <span>Remember Me</span>
+                        </label>
+                    </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                    <a href="index.html" class="btn waves-effect waves-light border-round gradient-45deg-purple-deep-orange col s12">Login</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6 m6 l6">
+                    <p class="margin medium-small"><a href="user-register.html">Register Now!</a></p>
+                    </div>
+                    <div class="input-field col s6 m6 l6">
+                    <p class="margin right-align medium-small"><a href="user-forgot-password.html">Forgot password ?</a></p>
+                    </div>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        <div class="content-overlay"></div>
+      </div>
     </div>
-
 
     <!-- BEGIN VENDOR JS-->
     <script src="../../../app-assets/js/vendors.min.js"></script>
@@ -58,32 +105,5 @@ License: You must have a valid license purchased only from themeforest(the above
     <!-- END THEME  JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <!-- END PAGE LEVEL JS-->
-
-    {{-- custom js --}}
-    <script src="../../../app-assets/js/scripts/ui-alerts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('success'))
-    <script>
-       Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "{{ session('success') }}",
-            showConfirmButton: false,
-            timer: 2000
-        });
-    </script>
-    @endif
-
-    @if(session('loginError'))
-    <script>
-       Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "{{ session('loginError') }}",
-          showConfirmButton: false,
-          timer: 2000
-        });
-    </script>
-    @endif
   </body>
 </html>

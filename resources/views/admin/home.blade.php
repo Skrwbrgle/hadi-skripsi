@@ -11,9 +11,9 @@
             <div class="col s10 m6 l6">
             <h5 class="breadcrumbs-title mt-0 mb-0"><span>Agnet Travels</span></h5>
             <ol class="breadcrumbs mb-0">
-                <li class="breadcrumb-item"><a href="/">Home</a>
+                <li class="breadcrumb-item"><a href="/admin">Home</a>
                 </li>
-                <li class="breadcrumb-item"><a href="/">Agent Travel</a>
+                <li class="breadcrumb-item"><a href="/admin/users">Agent Travel</a>
                 </li>
                 <li class="breadcrumb-item active">Agent List
                 </li>
@@ -81,7 +81,7 @@
                             <tr>
                                 <td></td>
                                 <td>{{ $user->id }}</td>
-                                <td><a href="/users/{{ $user->id }}">{{ $user->username }}</a>
+                                <td><a href="/admin/users/{{ $user->id }}">{{ $user->username }}</a>
                                 </td>
                                 <td>{{ $user->nama_agen_travel }}</td>
                                 <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y H:i') }}</td>
@@ -94,8 +94,8 @@
                                         <span class="chip red lighten-5"><span class="red-text">User</span></span>
                                     @endif
                                 </td>
-                                <td><a href="/users/edit/{{ $user->id }}"><i class="material-icons">edit</i></a></td>
-                                <td><a href="/users/{{ $user->id }}"><i class="material-icons">remove_red_eye</i></a></td>
+                                <td><a href="/admin/users/edit/{{ $user->id }}"><i class="material-icons">edit</i></a></td>
+                                <td><a href="/admin/users/{{ $user->id }}"><i class="material-icons">remove_red_eye</i></a></td>
                             </tr>
                         @endforeach
                         </tbody>

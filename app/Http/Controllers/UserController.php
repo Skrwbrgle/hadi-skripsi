@@ -4,15 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Validation\Rule as ValidationRule;
-
-$rules = [
-    'username' => 'required|string',
-    'nama_agen_travel' => 'required|string',
-    'no_telepon' => 'required|string',
-    'alamat' => 'required|string',
-];
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -79,24 +72,28 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(Request $request, User $user)
     {
+
+        $validatedData = $request->validate([
+            'username' =>
+            'required|min:3|max:255|unique:users,username,' . $user->id,
+            'nama_agen_travel' => 'required|max:255',
+            'no_telepon' => 'required|min:10|max:20',
+            'alamat' => 'required|max:255',
+            'password' => 'nullable|min:5|max:255|confirmed',
+        ]);
+
         if ($request->filled('password')) {
-            $rules['password'] = 'required|min:8|confirmed';
+            $validatedData['password'] =
+                Hash::make($validatedData['password']);;
+        } else {
+            unset($validatedData['password']);
         }
 
-        $rules['password_confirmation'] = [
-            'required',
-            ValidationRule::in([$request->password]),
-        ];
 
-        $request->validate($rules);
-        User::where('id', $user->id)->update([
-            'username' => $request->username,
-            'nama_agen_travel' => $request->nama_agen_travel,
-            'no_telepon' => $request->no_telepon,
-            'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
-        ]);
+        $user->update($validatedData);
+
         return redirect()->back()->with('success', $user->nama_agen_travel . ' has been updated!');
     }
 
@@ -109,6 +106,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         User::destroy($user->id);
-        return redirect('/')->with('success', $user->nama_agen_travel . ' has been deleted!');
+        return redirect('/admin')->with('success', $user->nama_agen_travel . ' has been deleted!');
     }
 }

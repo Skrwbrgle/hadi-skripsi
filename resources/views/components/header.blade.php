@@ -34,13 +34,28 @@
                             <time class="media-meta grey-text darken-2" datetime="2015-06-12T20:50:48+08:00">1 week ago</time>
                         </li>
                     </ul>
+
                     <!-- profile-dropdown-->
                     <ul class="dropdown-content" id="profile-dropdown">
-                        <li><a class="grey-text text-darken-1" href="user-profile-page.html"><i class="material-icons">person_outline</i> Profile</a></li>
+                        @auth
+                            <li>
+                                <a class="grey-text text-darken-1 gradient-45deg-indigo-purple white-text" href="#">
+                                    <i class="material-icons white-text">verified_user</i><span class="white-text"> {{ auth()->user()->username }}</span>
+                                </a>
+                            </li>
+                        @endauth
                         <li><a class="grey-text text-darken-1" href="page-faq.html"><i class="material-icons">help_outline</i> Help</a></li>
                         <li class="divider"></li>
                         <li><a class="grey-text text-darken-1" href="user-lock-screen.html"><i class="material-icons">lock_outline</i> Lock</a></li>
-                        <li><a class="grey-text text-darken-1" href="user-login.html"><i class="material-icons">keyboard_tab</i> Logout</a></li>
+                        <li>
+                            <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                                @method('post')
+                                @csrf
+                            </form>
+                            <a href="#" class="grey-text text-darken-1" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="material-icons">keyboard_tab</i> Logout
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <nav class="display-none search-sm">
@@ -50,6 +65,7 @@
                                 <input class="search-box-sm mb-0" type="search" required="" id="search" placeholder="Explore Materialize" data-search="template-list">
                                 <label class="label-icon" for="search"><i class="material-icons search-sm-icon">search</i></label><i class="material-icons search-sm-close">close</i>
                                 <ul class="search-list collection search-list-sm display-none"></ul>
+
                             </div>
                         </form>
                     </div>

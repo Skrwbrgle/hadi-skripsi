@@ -19,11 +19,13 @@
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/vendors.min.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/data-tables/css/dataTables.checkboxes.css">
     <!-- END: VENDOR CSS-->
     <!-- BEGIN: Page Level CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/themes/vertical-modern-menu-template/materialize.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/themes/vertical-modern-menu-template/style.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/pages/page-users.css">
+    <link rel="stylesheet" type="text/css" href="../../../app-assets/css/pages/app-invoice.css">
     <!-- END: Page Level CSS-->
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/custom/custom.css">
@@ -146,6 +148,7 @@
     <!-- BEGIN PAGE VENDOR JS-->
     <script src="../../../app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
     <script src="../../../app-assets/vendors/data-tables/extensions/responsive/js/dataTables.responsive.min.js"></script>
+    <script src="../../../app-assets/vendors/data-tables/js/datatables.checkboxes.min.js"></script>
     <!-- END PAGE VENDOR JS-->
     <!-- BEGIN THEME  JS-->
     <script src="../../../app-assets/js/plugins.js"></script>
@@ -155,10 +158,12 @@
     <!-- END THEME  JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script src="../../../app-assets/js/scripts/page-users.js"></script>
+    <script src="../../../app-assets/js/scripts/app-invoice.js"></script>
     <!-- END PAGE LEVEL JS-->
 
 
     {{-- custom js --}}
+    <script src="../../../app-assets/js/scripts/ui-alerts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -192,7 +197,7 @@
     function confirmEdit(event) {
         event.preventDefault();
          var passwordInput = document.getElementById('password');
-        var rePasswordInput = document.getElementById('re-password');
+        var rePasswordInput = document.getElementById('password_confirmation');
 
         if (passwordInput.value !== rePasswordInput.value) {
             Swal.fire({

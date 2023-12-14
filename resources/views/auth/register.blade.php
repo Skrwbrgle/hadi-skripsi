@@ -78,7 +78,7 @@
             </div>
             <div class="row">
               <div class="input-field col s12">
-                <p class="margin medium-small">
+                <p class="margin right-align medium-small">
                   <a href="/login">Already have an account? Login</a>
                 </p>
               </div>

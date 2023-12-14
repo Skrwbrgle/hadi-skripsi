@@ -9,3 +9,10 @@ NOTE:
 ------
 PLACE HERE YOUR OWN CSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+.logout-form button {
+    padding-left: 24px; /* Sesuaikan nilai padding sesuai keinginan Anda */
+    padding-right: 24px; /* Sesuaikan nilai padding sesuai keinginan Anda */
+    padding-top: 14px; /* Sesuaikan nilai padding sesuai keinginan Anda */
+    padding-bottom: 14px; /* Sesuaikan nilai padding sesuai keinginan Anda */
+}

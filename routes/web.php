@@ -3,8 +3,10 @@
 use App\Http\Controllers\AgentTravelController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PenumpangController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
+use App\Models\Penumpang;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,13 +35,10 @@ Route::get('/admin/users/{user}', [UserController::class, 'show'])->middleware('
 Route::get('/admin/users/edit/{user}', [UserController::class, 'edit'])->middleware('admin');
 Route::delete('/admin/users/delete/{user}', [UserController::class, 'destroy'])->middleware('admin');
 Route::put('/admin/users/update/{user}', [UserController::class, 'update'])->middleware('admin');
+Route::get('/admin/customers', [PenumpangController::class, 'index'])->middleware('admin');
+Route::get('/admin/customers/edit/{penumpang}', [PenumpangController::class, 'edit'])->middleware('admin');
+Route::delete('/admin/customers/delete/{penumpang}', [PenumpangController::class, 'destroy'])->middleware('admin');
+Route::put('/admin/customers/update/{penumpang}', [PenumpangController::class, 'update'])->middleware('admin');
 
 // AGENT TRAVEL ROUTES
 Route::get('/agent-travel', [AgentTravelController::class, 'index'])->middleware('agent_travel');
-
-
-
-
-// Route::get('/customers', function () {
-//     return view('admin/customer');
-// });

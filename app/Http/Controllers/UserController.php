@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         return view('admin/home', [
-            "title" => "Users",
+            "title" => "Agent Travels",
             "users" => User::all()
         ]);
     }
@@ -62,7 +62,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin/userEdit', ["user" => $user]);
+        return view('admin/userEdit', ["title" => "Edit Customer", "user" => $user]);
     }
 
     /**
@@ -94,7 +94,7 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return redirect()->back()->with('success', $user->nama_agen_travel . ' has been updated!');
+        return redirect('/admin/users/' . $user->id)->with('success', $user->nama_agen_travel . ' has been updated!');
     }
 
     /**

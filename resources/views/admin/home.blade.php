@@ -84,7 +84,7 @@
                                 <td><a href="/admin/users/{{ $user->id }}">{{ $user->username }}</a>
                                 </td>
                                 <td>{{ $user->nama_agen_travel }}</td>
-                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y ') }}</td>
                                 <td>{{ $user->no_telepon !== null ? $user->no_telepon : "-" }}</td>
                                 <td>{{ $user->is_admin ? 'Admin':'Agent travel' }}</td>
                                 <td>

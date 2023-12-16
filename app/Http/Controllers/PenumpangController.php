@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Penumpang;
 use App\Http\Requests\StorePenumpangRequest;
 use App\Http\Requests\UpdatePenumpangRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PenumpangController extends Controller
 {
@@ -15,7 +17,10 @@ class PenumpangController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin/customer', [
+            "title" => "Customers",
+            "customers" => Penumpang::all()
+        ]);
     }
 
     /**
@@ -58,7 +63,7 @@ class PenumpangController extends Controller
      */
     public function edit(Penumpang $penumpang)
     {
-        //
+        return view('admin/customerEdit', ["title" => "Edit Customer", "customer" => $penumpang]);
     }
 
     /**
@@ -68,9 +73,27 @@ class PenumpangController extends Controller
      * @param  \App\Models\Penumpang  $penumpang
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePenumpangRequest $request, Penumpang $penumpang)
+    public function update(Request $request, Penumpang $penumpang)
     {
-        //
+        $validatedData = $request->validate([
+            'username' =>
+            'required|min:3|max:255|unique:users,username,' . $penumpang->id,
+            'nama' => 'required|max:255',
+            'no_telepon' => 'required|min:10|max:20',
+            'alamat' => 'required|max:255',
+            'password' => 'nullable|min:5|max:255|confirmed',
+        ]);
+
+        if ($request->filled('password')) {
+            $validatedData['password'] =
+                Hash::make($validatedData['password']);;
+        } else {
+            unset($validatedData['password']);
+        }
+
+        $penumpang->update($validatedData);
+
+        return redirect('/admin/customers')->with('success', $penumpang->nama . ' has been updated!');
     }
 
     /**
@@ -81,6 +104,7 @@ class PenumpangController extends Controller
      */
     public function destroy(Penumpang $penumpang)
     {
-        //
+        Penumpang::destroy($penumpang->id);
+        return redirect('/admin/customers')->with('success', $penumpang->nama . ' has been deleted!');
     }
 }

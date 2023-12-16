@@ -189,7 +189,7 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                event.target.form.submit();
+                document.getElementById('deleteForm').submit();
             }
         });
     }

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Rute;
 use App\Http\Requests\StoreRuteRequest;
-use App\Http\Requests\UpdateRuteRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RuteController extends Controller
 {
@@ -15,7 +16,10 @@ class RuteController extends Controller
      */
     public function index()
     {
-        //
+        return view('agent-travel/route', [
+            "title" => "Travel Agents",
+            "routes" => Rute::where('user_id', Auth::id())->get()
+        ]);
     }
 
     /**
@@ -23,9 +27,19 @@ class RuteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'rute' => 'required|min:3|max:255|unique:rutes',
+            'jam_keberangkatan' => 'required|min:5|max:255',
+            'tarif' => 'required|max:255',
+            'transportasi' => 'required|min:3|max:255',
+            'user_id' => 'required',
+        ]);
+
+        $validatedData['jam_keberangkatan'] = date('H:i:s', strtotime($validatedData['jam_keberangkatan']));
+        Rute::create($validatedData);
+        return redirect('/agent-travel')->with('success', 'Rute has been cretaed!');
     }
 
     /**
@@ -47,7 +61,7 @@ class RuteController extends Controller
      */
     public function show(Rute $rute)
     {
-        //
+        return view('agent-travel/inputForm');
     }
 
     /**
@@ -68,9 +82,27 @@ class RuteController extends Controller
      * @param  \App\Models\Rute  $rute
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRuteRequest $request, Rute $rute)
+    public function update(Request $request, Rute $rute)
     {
-        //
+        $validatedData = $request->validate([
+            'is_publish' => ['required', 'numeric', 'in:0,1'],
+        ]);
+
+        $validatedData['is_publish'] = (int)$validatedData['is_publish'];
+
+        if ($rute->is_publish && $validatedData['is_publish'] === 1) {
+            return redirect()->back()->with('error', $rute->rute . ' has been published previously!');
+        }
+
+        if ($rute->is_publish === $validatedData['is_publish']) {
+            // Lakukan update hanya jika is_publish sebelumnya adalah 1
+            // $rute->update($validatedData);
+            return redirect()->back()->with('error', $rute->rute . ' has been unpublished!');
+        }
+
+        $rute->update($validatedData);
+
+        return redirect('/agent-travel')->with('success', $rute->rute . ' has been published!');
     }
 
     /**
@@ -81,6 +113,8 @@ class RuteController extends Controller
      */
     public function destroy(Rute $rute)
     {
-        //
+        dd($rute->id);
+        // Rute::destroy($rute->id);
+        // return redirect('/agent-travel')->with('success', $rute->rute . ' has been deleted!');
     }
 }

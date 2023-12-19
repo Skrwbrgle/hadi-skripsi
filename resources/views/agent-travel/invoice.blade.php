@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-@dd($routes)
     <div id="main">
       <div class="row">
         <div class="content-wrapper-before gradient-45deg-indigo-purple"></div>

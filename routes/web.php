@@ -5,6 +5,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PenumpangController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RuteController;
 use App\Http\Controllers\UserController;
 use App\Models\Penumpang;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,8 @@ Route::delete('/admin/customers/delete/{penumpang}', [PenumpangController::class
 Route::put('/admin/customers/update/{penumpang}', [PenumpangController::class, 'update'])->middleware('admin');
 
 // AGENT TRAVEL ROUTES
-Route::get('/agent-travel', [AgentTravelController::class, 'index'])->middleware('agent_travel');
+Route::get('/agent-travel', [RuteController::class, 'index'])->middleware('agent_travel');
+Route::get('/agent-travel/inputForm', [RuteController::class, 'show'])->middleware('agent_travel');
+Route::post('/agent-travel/routes/create', [RuteController::class, 'create'])->middleware('agent_travel');
+Route::put('/agent-travel/routes/publish/{rute}', [RuteController::class, 'update'])->middleware('agent_travel');
+Route::delete('/agent-travel/routes/delete/{rute}', [RuteController::class, 'destroy'])->middleware('agent_travel');

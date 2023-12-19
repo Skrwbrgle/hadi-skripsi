@@ -164,6 +164,9 @@
 
     {{-- custom js --}}
     <script src="../../../app-assets/js/scripts/ui-alerts.js"></script>
+    <script src="../../../app-assets/js/scripts/form-select2.js"></script>
+    <script src="../../../app-assets/js/scripts/advance-ui-modals.js"></script>
+    <script src="../../../app-assets/js/scripts/form-elements.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -175,6 +178,15 @@
         if (activeElement) {
             activeElement.classList.add('active');
         }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.timepicker');
+        var options = {
+            twelveHour: false, // Gunakan format 24 jam
+            format: 'HH:ii:ss', // Tetapkan format yang diinginkan
+        };
+        var instances = M.Timepicker.init(elems, options);
     });
 
     function confirmDelete(event) {
@@ -192,6 +204,46 @@
                 document.getElementById('deleteForm').submit();
             }
         });
+    }
+
+    function submitHiddenForm(formId) {
+        // Temukan formulir yang tersembunyi berdasarkan ID
+        var hiddenForm = document.getElementById(formId);
+        if (hiddenForm) {
+            // Panggil fungsi untuk menyiapkan nilai checkbox
+            prepareCheckboxValue(hiddenForm);
+
+            // Periksa apakah checkbox dicentang sebelum mengirimkan formulir
+            // var checkbox = hiddenForm.querySelector('#pubCheckbox');
+            // console.log(checkbox);
+
+            // if (checkbox && !checkbox.checked) {
+            //     // Tampilkan peringatan jika checkbox tidak dicentang
+            //     Swal.fire({
+            //     icon: 'warning',
+            //     title: 'Oops...',
+            //     text: 'Please check the box for publish',
+            //     showConfirmButton: false,
+            //     timer: 2000
+            // });
+            //     return;
+            // }
+            // Submit formulir yang tersembunyi
+            hiddenForm.submit();
+        }
+    }
+
+    function prepareCheckboxValue(form) {
+        var checkbox = form.querySelector('#pubCheckbox');
+        if (checkbox) {
+            var checkboxValue = checkbox.checked ? '1' : '0';
+            // Tambahkan elemen input tersembunyi untuk menyimpan nilai checkbox
+            var hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'is_publish';
+            hiddenInput.value = checkboxValue;
+            form.appendChild(hiddenInput);
+        }
     }
 
     function confirmEdit(event) {
@@ -231,6 +283,18 @@
             position: "center",
             icon: "success",
             title: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "{{ session('error') }}",
             showConfirmButton: false,
             timer: 2000
         });

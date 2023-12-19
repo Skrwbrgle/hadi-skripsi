@@ -16,6 +16,8 @@ class CreateRutesTable extends Migration
         Schema::create('rutes', function (Blueprint $table) {
             $table->id();
             $table->string('rute');
+            $table->string('transportasi');
+            $table->boolean('is_publish')->default(false);
             $table->time('jam_keberangkatan');
             $table->integer('tarif');
             $table->foreignId('user_id');

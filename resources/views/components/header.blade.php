@@ -40,7 +40,7 @@
                         @auth
                             <li>
                                 <a class="grey-text text-darken-1 gradient-45deg-indigo-purple white-text" href="#">
-                                    <i class="material-icons white-text">verified_user</i><span class="white-text"> {{ auth()->user()->username }}</span>
+                                    <i class="material-icons white-text">verified_user</i><span class="white-text"> {{ Auth()->user()->username }}</span>
                                 </a>
                             </li>
                         @endauth

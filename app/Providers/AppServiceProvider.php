@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Penumpang;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('agent', function (User $user) {
             return $user->is_admin !== 1;
+        });
+
+        Gate::define('customer', function (Penumpang $penumpang) {
+            return $penumpang;
         });
     }
 }

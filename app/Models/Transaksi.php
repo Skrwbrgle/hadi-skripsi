@@ -16,10 +16,10 @@ class Transaksi extends Model
         return $this->belongsTo(Rute::class);
     }
 
-    public function penumpang()
-    {
-        return $this->belongsTo(Penumpang::class);
-    }
+    // public function penumpang()
+    // {
+    //     return $this->belongsTo(Penumpang::class);
+    // }
 
     public function pembayaran()
     {

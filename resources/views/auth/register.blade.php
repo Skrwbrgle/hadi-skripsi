@@ -10,7 +10,7 @@
             @csrf
             <div class="row">
               <div class="input-field col s12">
-                <h5 class="ml-4">Register</h5>
+                <h5 class="ml-4">Sign Up</h5>
                 <p class="ml-4">Join to our community now !</p>
               </div>
             </div>

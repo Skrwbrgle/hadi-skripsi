@@ -6,6 +6,7 @@ use App\Models\Rute;
 use App\Http\Requests\StoreRuteRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PSpell\Config;
 
 class RuteController extends Controller
 {
@@ -113,8 +114,36 @@ class RuteController extends Controller
      */
     public function destroy(Rute $rute)
     {
-        dd($rute->id);
-        // Rute::destroy($rute->id);
-        // return redirect('/agent-travel')->with('success', $rute->rute . ' has been deleted!');
+        Rute::destroy($rute->id);
+        return redirect('/agent-travel')->with('success', $rute->rute . ' has been deleted!');
+    }
+
+    public function search(Request $request)
+    {
+        $jam = $request->jam;
+        $route = $request->route;
+        $transport = $request->transport;
+
+        if ($jam === 'morning') {
+            $timeRange = ['08:00:00', '12:00:00'];
+        } else if ($jam === 'afternoon') {
+            $timeRange = ['12:00:00', '18:00:00'];
+        } else if ($jam === 'evening') {
+            $timeRange = ['18:00:00', '22:00:00'];
+        } else {
+            $timeRange = ['00:00:00', '23:59:59'];
+        }
+
+        $results = Rute::with('user')
+            ->whereBetween('jam_keberangkatan', $timeRange)
+            ->where('rute', 'LIKE', '%' . $route . '%')
+            ->where('transportasi', $transport)
+            ->get();
+
+        if (!$results) {
+            return redirect('/')->with('not-found', 'Rute tidak ditemukan.');
+        } else {
+            return view('customer.index', ['results' => $results]);
+        }
     }
 }

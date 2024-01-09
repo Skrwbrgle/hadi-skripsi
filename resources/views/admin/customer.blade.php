@@ -102,10 +102,10 @@
                                 </td>
                                 <td>
                                     <a href="/admin/customers/edit/{{ $customer->id }}"><i class="material-icons indigo-text">edit</i></a>
-                                    <form id="deleteForm" action="/admin/customers/delete/{{ $customer->id }}" method="post">
+                                    <form id="deleteForm_{{ $customer->id }}" action="/admin/customers/delete/{{ $customer->id }}" method="post">
                                         @method('delete')
                                         @csrf
-                                            <button class="border-none N/A transparent" onclick="confirmDelete(event)"><i class="material-icons red-text">delete</i></button>
+                                            <button class="border-none N/A transparent" onclick="confirmDelete(event, '{{ $customer->id }}')"><i class="material-icons red-text">delete</i></button>
                                     </form>
                                 </td>
                             </tr>

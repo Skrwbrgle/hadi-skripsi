@@ -2,6 +2,11 @@
 
 return [
 
+    //INFOBIP
+    'infobip_base_url' => env('INFOBIP_BASE_URL'),
+    'infobip_api_key' => env('INFOBIP_API_KEY'),
+    // 'infobip_recipient' => env('INFOBIP_RECIPIENT'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

@@ -13,7 +13,7 @@
                 <ol class="breadcrumbs mb-0">
                   <li class="breadcrumb-item"><a href="/agent-travel">Home</a>
                   </li>
-                  <li class="breadcrumb-item"><a href="/agent-travel">User</a>
+                  <li class="breadcrumb-item"><a href="/agent-travel">Routes</a>
                   </li>
                   <li class="breadcrumb-item active">Input new route</li>
                 </ol>

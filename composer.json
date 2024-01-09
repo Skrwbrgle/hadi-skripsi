@@ -11,10 +11,12 @@
         "php": "^7.3|^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "infobip/infobip-api-php-client": "5.0",
         "itsgoingd/clockwork": "^5.1",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "midtrans/midtrans-php": "^2.5",
         "realrashid/sweet-alert": "^7.1"
     },
     "require-dev": {

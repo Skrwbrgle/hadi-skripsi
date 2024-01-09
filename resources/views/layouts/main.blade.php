@@ -189,7 +189,7 @@
         var instances = M.Timepicker.init(elems, options);
     });
 
-    function confirmDelete(event) {
+    function confirmDelete(event, id) {
         event.preventDefault();
         Swal.fire({
             title: 'Are you sure?',
@@ -201,7 +201,7 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('deleteForm').submit();
+                document.getElementById(`deleteForm_${id}`).submit();
             }
         });
     }

@@ -30,7 +30,7 @@
                 <li class="active bold"><a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">receipt</i><span class="menu-title" data-i18n="Pages">Invoice</span></a>
                     <div class="collapsible-body">
                         <ul class="collapsible collapsible-sub" data-collapsible="accordion">
-                            <li class="active"><a href="#"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">List Invoice</span></a>
+                            <li class="active"><a href="/agent-travel/invoice"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">List Invoice</span></a>
                             </li>
                             {{-- <li class="active"><a href="#"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">Customers</span></a>
                             </li> --}}

@@ -17,7 +17,7 @@ class CreatePembayaransTable extends Migration
             $table->id();
             $table->foreignId('transaksi_id');
             $table->string('id_order')->nullable();
-            $table->integer('no_rek')->nullable();
+            // $table->integer('no_rek')->nullable();
             $table->boolean('is_payment')->default(false);
             $table->timestamps();
         });

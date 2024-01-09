@@ -23,7 +23,7 @@
                 <span class="hide-on-small-only">Create Route</span>
                 </a>
             </div>
-            <div class="filter-btn">
+            {{-- <div class="filter-btn">
                 <!-- Dropdown Trigger -->
                 <a class='dropdown-trigger btn waves-effect waves-light purple darken-1 border-round' href='#'
                 data-target='btn-filter'>
@@ -32,11 +32,10 @@
                 </a>
                 <!-- Dropdown Structure -->
                 <ul id='btn-filter' class='dropdown-content'>
-                <li><a href="#!">Paid</a></li>
-                <li><a href="#!">Unpaid</a></li>
-                <li><a href="#!">Partial Payment</a></li>
+                <li><a href="#!">Car</a></li>
+                <li><a href="#!">Bus</a></li>
                 </ul>
-            </div>
+            </div> --}}
             <div class="responsive-table">
                 <table class="table invoice-data-table white border-radius-4 pt-1">
                     <thead>
@@ -84,22 +83,22 @@
                                         </p>
                                     </form>
                                 @if ($rute->is_publish)
-                                    <span class="chip lighten-5 green green-text">Publish</span>
+                                    <span class="invoice-publish chip lighten-5 green green-text">Publish</span>
                                 @else
-                                    <span class="chip lighten-5 red red-text">Unpublish</span>
+                                    <span class="invoice-publish chip lighten-5 red red-text">Unpublish</span>
                                 @endif
                                 </div>
                             </td>
                             <td>
                                 <div class="invoice-action" style="display: flex;">
                                     <button class="publish-button border-none N/A transparent" onclick="submitHiddenForm('publishForm_{{ $rute->id }}')">
-                                        <i class="material-icons indigo-text">publish</i>{{ $rute->id }}
+                                        <i class="material-icons indigo-text">publish</i>
                                     </button>
                                     {{-- @dd($rute->id) --}}
-                                    <form id="deleteForm" action="/agent-travel/routes/delete/{{ $rute->id }}" method="post">
+                                    <form id="deleteForm_{{ $rute->id }}" action="/agent-travel/routes/delete/{{ $rute->id }}" method="post">
                                         @method('delete')
                                         @csrf
-                                            <button class="border-none N/A transparent" onclick="confirmDelete(event)"><i class="material-icons red-text">delete</i></button>
+                                            <button class="border-none N/A transparent" onclick="confirmDelete(event, '{{ $rute->id }}')"><i class="material-icons red-text">delete</i></button>
                                     </form>
                                 </div>
                             </td>

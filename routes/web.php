@@ -32,8 +32,10 @@ Route::get('/login', [LoginController::class, 'index'])->name('login')->middlewa
 Route::get('/register', [RegisterController::class, 'index'])->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate'])->middleware('guest');
 Route::post('/register', [RegisterController::class, 'create'])->middleware('guest');
-Route::get('/search', [RuteController::class, 'search'])->middleware('guest');
+Route::post('/search', [RuteController::class, 'search'])->middleware('guest');
 Route::post('/booking', [TransaksiController::class, 'create'])->middleware('guest');
+Route::post('/refund', [TransaksiController::class, 'refund'])->middleware('guest');
+// Route::post('/send-email', [GuestController::class, 'sendEmail'])->middleware('guest');
 
 // ADMIN ROUTES
 Route::get('/admin', [UserController::class, 'index'])->middleware('admin');

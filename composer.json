@@ -17,6 +17,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "midtrans/midtrans-php": "^2.5",
+        "mpdf/mpdf": "^8.2",
         "realrashid/sweet-alert": "^7.1"
     },
     "require-dev": {

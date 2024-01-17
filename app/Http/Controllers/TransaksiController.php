@@ -7,9 +7,11 @@ use App\Http\Requests\StoreTransaksiRequest;
 use App\Http\Requests\UpdateTransaksiRequest;
 use App\Models\Pembayaran;
 use App\Models\Rute;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class TransaksiController extends Controller
@@ -145,7 +147,7 @@ The selected date must be a future date.');
             // echo ("Response body: " . $response->getBody()->getContents() . PHP_EOL);
             // return;
 
-            return redirect('/')->with('success', 'Booking success! please chack your whatapps');
+            return redirect('/')->with('success', 'Booking success! please check your whatapps');
         } catch (\Throwable $th) {
             return redirect('/')->with('success', $th);
         }
@@ -173,22 +175,91 @@ The selected date must be a future date.');
         }
 
         $transactionStatus = $payload['transaction_status'];
+        $refundStatus = $payload['fraud_status'];
 
-        $order = Pembayaran::where('id_order', $orderId)->first();
+        $order = Pembayaran::with('transaksi.rute.user')->where('id_order', $orderId)->first();
         if (!$order) {
             return response()->json(['message' => 'invalid order'], 400);
         }
-        // return response()->json([$orderId, $order], 200);
+
+        $data = [
+            'nama_travel' => $order->transaksi->rute->user->nama_agen_travel,
+            'id_order' => $order->id_order,
+            'rute' => $order->transaksi->rute->rute,
+            'tgl_berangkat' => \Carbon\Carbon::parse($order->transaksi->tanggal)->locale('id')->isoFormat('D'),
+            'bulan_berangkat' => \Carbon\Carbon::parse($order->transaksi->tanggal)->locale('id')->isoFormat('MMM'),
+            'hari_berangkat' => \Carbon\Carbon::parse($order->transaksi->tanggal)->locale('id')->isoFormat('dddd, Y'),
+            'jam_berangkat' => \Carbon\Carbon::createFromFormat('H:i:s', $order->transaksi->rute->jam_keberangkatan)->format('h:i A'),
+            'titik_jemput' => $order->transaksi->alamat,
+            'price' => 'Rp' . number_format($order->transaksi->total_biaya, 0, ',', '.'),
+            'penumpang' => $order->transaksi->jumlah_penumpang
+        ];
+        // return response()->json($data, 200);
 
         if ($transactionStatus == 'settlement') {
             $order->is_payment = 1;
             $order->save();
+
+            $pdfFileName = 'e-ticket_' . uniqid() . '.pdf';
+            $pdfFilePath = storage_path('app/public/' . $pdfFileName);
+            $pdfUrl = asset('storage/' . $pdfFileName);
+            $pdfUrl = str_replace('http://', 'https://', $pdfUrl);
+
+            $html = view('customer.ticket', ['data' => $data])->render();
+
+            $mpdf = new \Mpdf\Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'Letter',
+                'orientation' => 'P',
+                'margin_left' => 10,
+                'margin_right' => 10
+            ]);
+
+            $mpdf->WriteHTML($html);
+            // return $mpdf->Output();
+            $mpdf->Output($pdfFilePath, \Mpdf\Output\Destination::FILE);
+
+            $BASE_URL = config('app.infobip_base_url');
+            $API_KEY = config('app.infobip_api_key');
+            $RECIPIENT = $order->transaksi->no_telepon;
+
+            $client = new Client([
+                'base_uri' => $BASE_URL,
+                'headers' => [
+                    'Authorization' => "App " . $API_KEY,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            // return $pdfUrl;
+
+            $response = $client->request(
+                'POST',
+                'whatsapp/1/message/document',
+                [
+                    RequestOptions::JSON => [
+                        'from' => '447860099299',
+                        'to' => $RECIPIENT,
+                        'content' => [
+                            'mediaUrl' => $pdfUrl,
+                            'caption' => 'Ini pembelian E-Ticket anda dari kami Travelize',
+                            'filename' => $pdfFileName,
+                        ],
+                        'callbackData' => 'Callback data',
+                    ],
+                ]
+            );
+            // return $response->getBody()->getContents();
+            return response()->json([$response->getBody()->getContents(), $pdfUrl], 200);
         } elseif ($transactionStatus == 'expire') {
-            $order->is_payment = 0;
+            $order->transaksi->delete();
+            $order->delete();
+            return response()->json(['message' => 'payment expired, data deleted'], 200);
+        } elseif ($transactionStatus == 'refund' && $refundStatus == 'accept') {
+            $order->is_payment = 2;
             $order->save();
-        } elseif ($transactionStatus == 'refund') {
-            $order->is_payment = 0;
-            $order->save();
+            return response()->json(['message' => 'payment refunf, uang anda akan dikembalikan dalam 24jam'], 200);
         }
 
         return response()->json(['message' => 'success'], 200);
@@ -196,52 +267,56 @@ The selected date must be a future date.');
 
     public function refund(Request $request)
     {
-        $orderId = $request->input('order_id');
-        $amountToRefund = $request->input('amount');
+        try {
+            $orderId = $request->input('order_id');
+            $amountToRefund = $request->input('amount');
 
-        // dd($orderId . '-' . $amountToRefund);
-        $payment = Pembayaran::with('transaksi')->where('id_order', $orderId)->first();
+            // dd($orderId . '-' . $amountToRefund);
+            $payment = Pembayaran::with('transaksi')->where('id_order', $orderId)->first();
 
-        if (!$payment) {
-            return response()->json(['message' => 'Invalid order ID'], 400);
+            if (!$payment) {
+                return response()->json(['message' => 'Invalid order ID'], 400);
+            }
+
+            $totalBiaya = $payment->transaksi->total_biaya;
+            if ($amountToRefund > $totalBiaya) {
+                return response()->json(['message' => 'Invalid refund amount'], 400);
+            }
+
+            $refundUrl = 'https://api.sandbox.midtrans.com/v2/' . $orderId . '/refund';
+            $refund_id = 'REFUND-' . time() . '-' . $payment->transaksi->id;
+
+            $refundData = [
+                'refund_key' => $refund_id,
+                'amount' => $amountToRefund,
+                'reason' => 'for some reason',
+            ];
+
+            $midtransServerKey = config('midtrans.server_key');
+            $client = new Client();
+
+            $response = $client->post($refundUrl, [
+                'headers' => [
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                    'authorization' => 'Basic ' . base64_encode($midtransServerKey . ':'),
+                ],
+                'json' => $refundData,
+            ]);
+
+            $responseData = json_decode($response->getBody(), true);
+            // Log::info('refund-midtrans', [
+            //     'payload' => $response->getBody()
+            // ]);
+
+            if ($responseData['status_code'] === '200') {
+                return redirect('/')->with('refund', $responseData['status_message']);
+            } else {
+                return redirect('/')->with('refund', $responseData['status_message']);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $totalBiaya = $payment->transaksi->total_biaya;
-        if ($amountToRefund > $totalBiaya) {
-            return response()->json(['message' => 'Invalid refund amount'], 400);
-        }
-
-        $refundUrl = 'https://api.sandbox.midtrans.com/v2/' . $orderId . '/refund';
-        $refund_id = 'REFUND-' . time() . '-' . $payment->transaksi->id;
-
-        $refundData = [
-            'refund_key' => $refund_id,
-            'amount' => $amountToRefund,
-            'reason' => 'for some reason',
-        ];
-
-        $midtransServerKey = config('midtrans.server_key');
-        $client = new Client();
-
-        // Melakukan permintaan HTTP POST menggunakan Guzzle
-        $response = $client->post($refundUrl, [
-            'headers' => [
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'authorization' => 'Basic ' . base64_encode($midtransServerKey . ':'),
-            ],
-            'json' => $refundData,
-        ]);
-
-        $responseData = json_decode($response->getBody(), true);
-        Log::info('refund-midtrans', [
-            'payload' => $response->getBody()
-        ]);
-
-        // Menangani atau menggunakan data respons sesuai kebutuhan Anda
-        // ...
-
-        return response()->json(['message' => $responseData], 200);
     }
 
 

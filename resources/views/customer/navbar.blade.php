@@ -14,6 +14,7 @@
           <li><a class="nav-link scrollto" href="#about">About Us</a></li>
           <li><a class="nav-link scrollto" href="#supporters">Routes</a></li>
           <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
+          <li><a class="nav-link scrollto" href="#refund">Refund</a></li>
           <li class="dropdown"><a href="#"><span>Agentsi</span> <i class="bi bi-chevron-down"></i></a>
           <ul>
             <li><a href="/login">Sign In</a></li>

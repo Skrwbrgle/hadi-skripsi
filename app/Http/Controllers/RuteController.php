@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rute;
 use App\Http\Requests\StoreRuteRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PSpell\Config;
@@ -125,7 +126,7 @@ class RuteController extends Controller
         $transport = $request->transport;
 
         if ($jam === 'morning') {
-            $timeRange = ['08:00:00', '12:00:00'];
+            $timeRange = ['07:00:00', '12:00:00'];
         } else if ($jam === 'afternoon') {
             $timeRange = ['12:00:00', '18:00:00'];
         } else if ($jam === 'evening') {
@@ -135,15 +136,33 @@ class RuteController extends Controller
         }
 
         $results = Rute::with('user')
+            ->where('is_publish', 1)
             ->whereBetween('jam_keberangkatan', $timeRange)
             ->where('rute', 'LIKE', '%' . $route . '%')
             ->where('transportasi', $transport)
             ->get();
 
-        if (!$results) {
-            return redirect('/')->with('not-found', 'Rute tidak ditemukan.');
+        $routes = Rute::where('is_publish', 1)->pluck('rute');
+        $agensi = User::where('is_admin', 0)->select('nama_agen_travel', 'alamat', 'no_telepon')->get();
+        $cityMapping = [];
+
+        foreach ($routes as $rute) {
+            $parts = explode(' - ', $rute);
+            $city = $parts[0]; // Nama kota pertama
+
+            // Memastikan nama kota hanya ditambahkan sekali
+            if (!in_array($city, $cityMapping)) {
+                $cityMapping[] = $city;
+            }
+            if (!in_array($parts[1], $cityMapping)) {
+                $cityMapping[] = $parts[1];
+            }
+        }
+
+        if (count($results) > 0) {
+            return view('customer.index', ['results' => $results, "rute" => $cityMapping, "agensi" => $agensi]);
         } else {
-            return view('customer.index', ['results' => $results]);
+            return redirect('/')->with('not-found', 'Routes is not available.');
         }
     }
 }

@@ -5,39 +5,39 @@
 
           <div class="col-lg-3 col-md-6 footer-info">
             <img src="assets/img/logo.png" alt="TheEvenet">
-            <p>In alias aperiam. Placeat tempore facere. Officiis voluptate ipsam vel eveniet est dolor et totam porro. Perspiciatis ad omnis fugit molestiae recusandae possimus. Aut consectetur id quis. In inventore consequatur ad voluptate cupiditate debitis accusamus repellat cumque.</p>
+            <p>Travelize is an innovative platform that provides an easy and convenient online ticket booking experience for your travels. With a user-friendly design and cutting-edge technology, Travelize assists you in planning your journeys hassle-free.</p>
           </div>
 
           <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Useful Links</h4>
+            {{-- <h4>Useful Links</h4>
             <ul>
               <li><i class="bi bi-chevron-right"></i> <a href="#">Home</a></li>
               <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
               <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
               <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li>
               <li><i class="bi bi-chevron-right"></i> <a href="#">Privacy policy</a></li>
-            </ul>
+            </ul> --}}
           </div>
 
           <div class="col-lg-3 col-md-6 footer-links">
             <h4>Useful Links</h4>
             <ul>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#">Privacy policy</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#hero">Home</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#about">About us</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#supporters">Routes</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#contact">Contact Us</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#refund">Refund</a></li>
             </ul>
           </div>
 
           <div class="col-lg-3 col-md-6 footer-contact">
             <h4>Contact Us</h4>
             <p>
-              A108 Adam Street <br>
-              New York, NY 535022<br>
-              United States <br>
-              <strong>Phone:</strong> +1 5589 55488 55<br>
-              <strong>Email:</strong> info@example.com<br>
+                Fakulta Teknik<br>
+                Universitas Palangaka Raya<br>
+                Central Kalimantan <br>
+              <strong>Phone:</strong> +62 857 5244 3827<br>
+              <strong>Email:</strong> travelize7@gmail.com<br>
             </p>
 
             <div class="social-links">

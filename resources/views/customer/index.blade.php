@@ -38,7 +38,7 @@
       <h1 class="mb-4 pb-0">Enjoy in the<span> best</span> way!</h1>
       <p class="mb-6 pb-0">Enjoy our services for your trip anytime</p>
       <form id="travelForm" action="/search" method="post">
-        @method('get')
+        @method('post')
         @csrf
         <div class="d-flex">
           <div class="d-flex flex-wrap flex-row bg-white align-items-center p-4 gap-3 rounded-4">
@@ -65,9 +65,12 @@
                 Route:
               </label>
               <select id="routeDropdown" class="form-select fw-light fs-6 text-secondary" name="route">
-                <option value="palangka raya">Palangka Raya</option>
+                @foreach ($rute as $i)
+                    <option value="{{ $i }}">{{ $i }}</option>
+                @endforeach
+                {{-- <option value="palangka raya">Palangka Raya</option>
                 <option value="sampit">Sampit</option>
-                <option value="banjarmasin">Banjarmasin</option>
+                <option value="banjarmasin">Banjarmasin</option> --}}
               </select>
             </div>
              <svg xmlns="http://www.w3.org/2000/svg" width="1" height="52" viewBox="0 0 1 52" fill="none">
@@ -103,18 +106,16 @@
       <div class="container position-relative" data-aos="fade-up">
         <div class="row">
           <div class="col-lg-6">
-            <h2>About The Event</h2>
-            <p>Sed nam ut dolor qui repellendus iusto odit. Possimus inventore eveniet accusamus error amet eius aut
-              accusantium et. Non odit consequatur repudiandae sequi ea odio molestiae. Enim possimus sunt inventore in
-              est ut optio sequi unde.</p>
+            <h2>About Travelize</h2>
+            <p>Welcome to Travelize, your go-to platform for seamless travel experiences! At Travelize, we are dedicated to providing you with a reliable and user-friendly solution for all your travel needs.</p>
           </div>
           <div class="col-lg-3">
             <h3>Where</h3>
-            <p>Downtown Conference Center, New York</p>
+            <p>Fakultas Teknik, Universitas Palangka Raya</p>
           </div>
           <div class="col-lg-3">
-            <h3>When</h3>
-            <p>Monday to Wednesday<br>10-12 December</p>
+            <h3>Our Mission</h3>
+            <p>Our mission at Travelize is to simplify travel planning, making it hassle-free and enjoyable for every user. We empower travelers by providing a wide range of affordable options on a secure platform, ensuring the creation of lasting memories.</p>
           </div>
         </div>
       </div>
@@ -168,7 +169,6 @@
             @endforeach
           </div>
         @else
-
         @endif
       </div>
 
@@ -181,32 +181,39 @@
 
 
       <div class="section-header">
-        <h2>Routes</h2>
-        @error('no_telepon')
-            <div class="card-alert card gradient-45deg-red-pink">
-            <div class="card-content white-text">
-                <p><i class="material-icons">error</i> DANGER : {{ $message }}</p>
-            </div>
-            <button type="button" class="close white-text" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-            </div>
-        @enderror
-        @error('nik')
-                    <div class="card-alert card gradient-45deg-red-pink">
-                    <div class="card-content white-text">
-                        <p><i class="material-icons">error</i> DANGER : {{ $message }}</p>
-                    </div>
-                    <button type="button" class="close white-text" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    </div>
-                @enderror
+        <h2>agentsi</h2>
+        <p>Travelize agency partner</p>
       </div>
-
       <div class="row no-gutters supporters-wrap clearfix" data-aos="zoom-in" data-aos-delay="100">
 
-        <div class="col-lg-3 col-md-4 col-xs-6">
+        @foreach ($agensi as $agen)
+            <div class="col-lg-3 col-md-6 col-xs-6">
+                <div class="ag-courses_item">
+                    <a href="#" class="ag-courses-item_link">
+                        <div class="ag-courses-item_bg"></div>
+
+                        <div class="ag-courses-item_title">
+                        {{ $agen->nama_agen_travel }}
+                        </div>
+
+
+                        <div class="ag-courses-item_date-box">
+                            <i class="bi bi-geo-alt" style="font-size: 1.5rem;"></i>
+                            <span class="ag-courses-item_date">
+                                {{ $agen->alamat }}
+                            </span>
+                        </div>
+                        <div class="ag-courses-item_phone-box">
+                            <i class="bi bi-telephone"></i>
+                            <span class="ag-courses-item_phone">
+                                {{ $agen->no_telepon }}
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        @endforeach
+        {{-- <div class="col-lg-3 col-md-4 col-xs-6">
 
           <div class="supporter-logo">
             <img src="assets/img/supporters/1.png" class="img-fluid" alt="">
@@ -253,7 +260,7 @@
           <div class="supporter-logo">
             <img src="assets/img/supporters/8.png" class="img-fluid" alt="">
           </div>
-        </div>
+        </div> --}}
 
       </div>
       </div>
@@ -455,8 +462,8 @@
       </div>
       <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal -->
 
+    <!-- /.modal -->
     <section id="contact" class="section-bg">
 
       <div class="container" data-aos="fade-up">
@@ -472,7 +479,7 @@
             <div class="contact-address">
               <i class="bi bi-geo-alt"></i>
               <h3>Address</h3>
-              <address>A108 Adam Street, NY 535022, USA</address>
+              <address><a href="https://maps.app.goo.gl/qMhWAin7qdK3EqR59" target="_blank">Fakulta Teknik, Universitas Palangaka Raya</a></address>
             </div>
           </div>
 
@@ -480,7 +487,7 @@
             <div class="contact-phone">
               <i class="bi bi-phone"></i>
               <h3>Whatsapp Number</h3>
-              <p><a href="tel:+155895548855">+1 5589 55488 55</a></p>
+              <p><a href="tel:+6285752443827">+62 857 5244 3827</a></p>
             </div>
           </div>
 
@@ -488,14 +495,16 @@
             <div class="contact-email">
               <i class="bi bi-envelope"></i>
               <h3>Email</h3>
-              <p><a href="mailto:info@example.com">info@example.com</a></p>
+              <p><a href="mailto:travelize7@gmail.com">travelize7@gmail.com</a></p>
             </div>
           </div>
 
         </div>
-
+{{--
         <div class="form">
-          <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+          <form action="/send-email" method="post" role="form" class="php-email-form">
+            @csrf
+            @method('post')
             <div class="row">
               <div class="form-group col-md-6">
                 <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
@@ -517,10 +526,40 @@
             </div>
             <div class="text-center"><button type="submit">Send Message</button></div>
           </form>
+        </div> --}}
+
+    </div>
+</section><!-- End Contact Section -->
+
+{{-- .modal --}}
+<section id="refund" class="section-bg">
+    <hr>
+      <div class="container my-5" data-aos="fade-up">
+
+        <div class="section-header">
+          <h2>Refund ticket</h2>
+          <p>Look into your ticket to insert data form refund.</p>
         </div>
+
+        <div class="form">
+          <form action="/refund" method="post" role="form">
+            @method('post')
+            @csrf
+            <div class="row">
+              <div class="form-group col-md-6">
+                <input type="text" name="order_id" class="form-control" id="order_id" placeholder="TRAV-XXXXXXXXX-XX" required>
+              </div>
+              <div class="form-group col-md-6 mt-3 mt-md-0">
+                <input type="text" class="form-control" name="amount" id="amount" placeholder="Gross Amount" required>
+              </div>
+            </div>
+            <div class="text-center mt-5"><button class="buy-tickets fs-5 px-5 py-2" type="submit">Refund</button></div>
+          </form>
+         </div>
 
       </div>
     </section><!-- End Contact Section -->
+
 
   </main><!-- End #main -->
 
@@ -528,7 +567,9 @@
   @include('customer.footer')
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  <!-- SweetAlert CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- Vendor JS Files -->
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -567,6 +608,22 @@
           timer: 3000
       });
   </script>
+  @endif
+
+  @if(session('refund'))
+  @php
+    $posisi = strpos(session('refund'), "Success");
+    $posisi !== false ? $statusIcon = 'success' : $statusIcon = 'error';
+  @endphp
+    <script>
+        Swal.fire({
+            position: "center",
+            icon: "{{ $statusIcon }}",
+            title: "{{ session('refund') }}",
+            showConfirmButton: false,
+            timer: 3000
+        });
+    </script>
   @endif
 
   @if(session('error'))

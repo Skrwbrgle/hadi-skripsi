@@ -11,7 +11,7 @@
     <meta name="author" content="ThemeSelect">
     <title>E-Travelize</title>
     <!-- resources/views/layouts/app.blade.php atau header.blade.php -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11"> --}}
     <link rel="apple-touch-icon" href="../../../app-assets/images/favicon/apple-touch-icon-152x152.png">
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/favicon/favicon-32x32.png">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -142,6 +142,8 @@
     </footer>
     <!-- END: Footer-->
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- BEGIN VENDOR JS-->
     <script src="../../../app-assets/js/vendors.min.js"></script>
     <!-- BEGIN VENDOR JS-->
@@ -167,8 +169,34 @@
     <script src="../../../app-assets/js/scripts/form-select2.js"></script>
     <script src="../../../app-assets/js/scripts/advance-ui-modals.js"></script>
     <script src="../../../app-assets/js/scripts/form-elements.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        // filter btn start
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.filter-status').forEach((el) => {
+                el.addEventListener('click', () => {
+                    const selectedStatus = el.innerHTML.toLowerCase();
+                    filterTable(selectedStatus);
+                });
+            });
+
+            function filterTable(selectedStatus) {
+                const rows = document.querySelectorAll('.invoice-data-table tbody tr');
+
+                rows.forEach(row => {
+                    const rowStatus = row.dataset.status === '1' ? 'paid' : row.dataset.status === '2' ? 'refund' : 'unpaid'
+
+                    if (selectedStatus === 'all' || rowStatus === selectedStatus) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        });
+        // filter btn end
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // Ambil URL saat ini
         var currentUrl = window.location.pathname;

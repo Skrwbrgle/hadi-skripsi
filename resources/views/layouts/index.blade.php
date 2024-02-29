@@ -20,13 +20,13 @@ License: You must have a valid license purchased only from themeforest(the above
     <meta name="description" content="Materialize is a Material Design Admin Template,It's modern, responsive and based on Material Design by Google.">
     <meta name="keywords" content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
     <meta name="author" content="ThemeSelect">
-    <title>User Login | Materialize - Material Design Admin Template</title>
+    <title>User Login </title>
     <link rel="apple-touch-icon" href="../../../app-assets/images/favicon/apple-touch-icon-152x152.png">
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/favicon/favicon-32x32.png">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- BEGIN: VENDOR CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/vendors.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11"> --}}
     <!-- END: VENDOR CSS-->
     <!-- BEGIN: Page Level CSS-->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/themes/vertical-modern-menu-template/materialize.css">
@@ -45,6 +45,7 @@ License: You must have a valid license purchased only from themeforest(the above
       <div class="content-overlay"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- BEGIN VENDOR JS-->
     <script src="../../../app-assets/js/vendors.min.js"></script>
@@ -61,7 +62,6 @@ License: You must have a valid license purchased only from themeforest(the above
 
     {{-- custom js --}}
     <script src="../../../app-assets/js/scripts/ui-alerts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if(session('success'))
     <script>
        Swal.fire({
@@ -76,14 +76,67 @@ License: You must have a valid license purchased only from themeforest(the above
 
     @if(session('loginError'))
     <script>
-       Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "{{ session('loginError') }}",
-          showConfirmButton: false,
-          timer: 2000
+        Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "{{ session('loginError') }}",
+            showConfirmButton: false,
+            timer: 2000
         });
     </script>
     @endif
-  </body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi dropdown
+            const dropdownTrigger = document.querySelector('.dropdown-trigger');
+            const dropdownOptions = document.querySelector('#btn-filter');
+
+            const filterTable = function(status) {
+                // Semua baris tabel
+                const rows = document.querySelectorAll('.invoice-data-table tbody tr');
+
+                rows.forEach(row => {
+                    const rowStatus = row.dataset.status;
+
+                    // Tampilkan atau sembunyikan berdasarkan status
+                    if (status === 'all' || rowStatus === status) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            };
+
+            // Tambahkan event listener untuk setiap opsi filter
+            dropdownOptions.querySelectorAll('li a').forEach(option => {
+                option.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const selectedStatus = this.textContent.toLowerCase();
+                    filterTable(selectedStatus);
+                });
+            });
+
+            // Event listener untuk dropdown trigger
+            dropdownTrigger.addEventListener('click', function() {
+                // Buka dropdown
+                dropdownOptions.style.display = 'block';
+
+                // Tutup dropdown saat item dipilih
+                dropdownOptions.querySelectorAll('li a').forEach(option => {
+                    option.addEventListener('click', function() {
+                        dropdownOptions.style.display = 'none';
+                    });
+                });
+
+                // Tutup dropdown saat di luar dropdown diklik
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.filter-btn')) {
+                        dropdownOptions.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+    </body>
 </html>

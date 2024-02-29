@@ -7,6 +7,8 @@ return [
     'infobip_api_key' => env('INFOBIP_API_KEY'),
     // 'infobip_recipient' => env('INFOBIP_RECIPIENT'),
 
+    'token_fonnte' => env('FONNTE_TOKEN'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

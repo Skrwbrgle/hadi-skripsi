@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTransaksiRequest;
 use App\Models\Pembayaran;
 use App\Models\Rute;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -31,7 +32,7 @@ class TransaksiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function order(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -45,36 +46,32 @@ class TransaksiController extends Controller
                 'tanggal' => 'required|date',
             ]);
 
-            if (strtotime($request->tanggal) < strtotime(now())) {
-                return redirect()->back()->with('error', '
-The selected date must be a future date.');
+            $currentDate = Carbon::today()->startOfDay();
+            $selectedDate = Carbon::createFromFormat('Y-m-d', $validatedData['tanggal'])->startOfDay();
+
+            if ($selectedDate->lte($currentDate)) {
+                return redirect('/')->with('error', 'The selected date must be a future date.');
             }
+
             $noTelepon = $request->no_telepon;
             if (substr($noTelepon, 0, 2) === '08') {
                 // Jika ya, tambahkan awalan "62"
                 $noTelepon = '62' . substr($noTelepon, 1);
             }
 
-            $rute = Rute::with('user')->where('id', $request->input('rute_id'))->get();
+            $rute = Rute::with('user')->where('id', $request->input('rute_id'))->first();
             if (!$rute) {
-                return redirect('/')->with('not-found', 'Rute not found.');
+                return redirect('/')->back()->with('not-found', 'Rute not found.');
             }
 
-            $tarif_per_penumpang = $rute[0]->tarif;
+            $tarif_per_penumpang = $rute->tarif;
             $total_biaya = $tarif_per_penumpang * $request->input('jumlah_penumpang');
 
-            $transaksiData = array_merge($validatedData, [
-                'rute_id' => (int)$request->rute_id,
-                'no_telepon' => $noTelepon,
-                'nik' => (int)$request->nik,
-                'jumlah_penumpang' => (int)$request->jumlah_penumpang,
-                'total_biaya' => $total_biaya,
-                'tanggal' => $request->tanggal,
-            ]);
+            $validatedData['no_telepon'] = $noTelepon;
+            $validatedData['total_biaya'] = $total_biaya;
 
-            // dd($transaksiData);
-            $transaksi = Transaksi::create($transaksiData);
 
+            $transaksi = Transaksi::create($validatedData);
             // MIDTRANS SNAP REQ
             \Midtrans\Config::$serverKey = config('midtrans.server_key');
             \Midtrans\Config::$isProduction = false;
@@ -83,30 +80,31 @@ The selected date must be a future date.');
 
             $order_id = 'TRAV-' . time() . '-' . $transaksi->id;
 
-            $params = array(
-                'transaction_details' => array(
+
+            $params = [
+                'transaction_details' => [
                     'order_id' => $order_id,
                     'gross_amount' => $total_biaya,
-                ),
-                'item_details' => array(
-                    array(
-                        'id' => $rute[0]->id,
-                        'brand' => $rute[0]->user->nama_agen_travel,
-                        'name' => $rute[0]->rute . ' at ' . $transaksi->tanggal . '/' . \Carbon\Carbon::parse($rute[0]->jam_keberangkatan)->format('h:i A'),
+                ],
+                'item_details' => [
+                    [
+                        'id' => $rute->id,
+                        'brand' => $rute->user->nama_agen_travel,
+                        'name' => $rute->rute . ' at ' . $transaksi->tanggal . '/' . \Carbon\Carbon::parse($rute->jam_keberangkatan)->format('h:i A'),
                         'price' => (int)$tarif_per_penumpang,
                         'quantity' => (int)$transaksi->jumlah_penumpang,
-                        'category' => $rute[0]->transportasi,
+                        'category' => $rute->transportasi,
                         'merchant_name' => 'Travelize',
-                    )
-                ),
-                'customer_details' => array(
+                    ]
+                ],
+                'customer_details' => [
                     'first_name' => $transaksi->nama,
                     'phone' => $transaksi->no_telepon,
-                    'billing_address' => array(
+                    'billing_address' => [
                         'address' => $transaksi->alamat
-                    ),
-                ),
-            );
+                    ],
+                ],
+            ];
 
             $snapToken = \Midtrans\Snap::createTransaction($params);
             // CREATE PAYMENT DATA
@@ -114,6 +112,35 @@ The selected date must be a future date.');
                 'transaksi_id' => $transaksi->id,
                 'id_order' => $order_id,
             ]);
+
+            // push whatsapp
+            // $target = $transaksi->no_telepon;
+            // $tokenFonnte = config('app.token_fonnte');
+            // $curl = curl_init();
+
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => 'https://api.fonnte.com/send',
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'POST',
+            //     CURLOPT_POSTFIELDS => array(
+            //         'target' => $target,
+            //         'message' => 'Hi ' . $transaksi->nama . '!, kami dari TRAVELIZE silahkan melakukan pembayaran tiket anda melalui link berikut ini, Terimakasih 🙏🙏 :' . $snapToken->redirect_url,
+            //         'countryCode' => '62', //optional
+            //     ),
+            //     CURLOPT_HTTPHEADER => array(
+            //         "Authorization: $tokenFonnte" //change TOKEN to your actual token
+            //     ),
+            // ));
+
+            // $response = curl_exec($curl);
+
+            // curl_close($curl);
+            // echo $response;
 
             $BASE_URL = config('app.infobip_base_url');
             $API_KEY = config('app.infobip_api_key');
@@ -219,6 +246,37 @@ The selected date must be a future date.');
             // return $mpdf->Output();
             $mpdf->Output($pdfFilePath, \Mpdf\Output\Destination::FILE);
 
+            // Send E-Ticket ke whatsapp
+            // $target = $order->transaksi->no_telepon;
+            // $tokenFonnte = config('app.token_fonnte');
+            // // dd($pdfUrl);
+            // $curl = curl_init();
+
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => 'https://api.fonnte.com/send',
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'POST',
+            //     CURLOPT_POSTFIELDS => array(
+            //         'target' => $target,
+            //         'message' => 'Ini pembelian E-Ticket anda dari kami Travelize. silahkan download ' . $pdfUrl,
+            //         'url' => $pdfUrl,
+            //         'filename' => $pdfFileName, //optional, only works on file and audio
+            //         'countryCode' => '62', //optional
+            //     ),
+            //     CURLOPT_HTTPHEADER => array(
+            //         "Authorization: $tokenFonnte" //change TOKEN to your actual token
+            //     ),
+            // ));
+
+            // $response = curl_exec($curl);
+
+            // curl_close($curl);
+
             $BASE_URL = config('app.infobip_base_url');
             $API_KEY = config('app.infobip_api_key');
             $RECIPIENT = $order->transaksi->no_telepon;
@@ -251,6 +309,8 @@ The selected date must be a future date.');
                 ]
             );
             // return $response->getBody()->getContents();
+            // $data_res = json_decode($response, true);
+            // return response()->json([$data_res['detail'], $pdfUrl], 200);
             return response()->json([$response->getBody()->getContents(), $pdfUrl], 200);
         } elseif ($transactionStatus == 'expire') {
             $order->transaksi->delete();
@@ -275,12 +335,23 @@ The selected date must be a future date.');
             $payment = Pembayaran::with('transaksi')->where('id_order', $orderId)->first();
 
             if (!$payment) {
-                return response()->json(['message' => 'Invalid order ID'], 400);
+                return redirect('/')->with('error', 'Invalid order ID.');
+                // return response()->json(['message' => 'Invalid order ID'], 400);
             }
 
             $totalBiaya = $payment->transaksi->total_biaya;
-            if ($amountToRefund > $totalBiaya) {
-                return response()->json(['message' => 'Invalid refund amount'], 400);
+            $departureTime = $payment->transaksi->tanggal;
+            $refundDeadline = Carbon::createFromFormat('Y-m-d H:i:s', $departureTime)->subDay();
+
+            if (!($amountToRefund == $totalBiaya)) {
+                return redirect('/')->with('error', 'Invalid refund amount.');
+                // return response()->json(['message' => 'Invalid refund amount'], 400);
+            }
+
+            // dd($departureTime, $refundDeadline, Carbon::now());
+            if (Carbon::now()->gte($refundDeadline)) {
+                return redirect('/')->with('error', 'Refund deadline has passed. Refund cannot be processed.');
+                // return response()->json(['message' => 'Refund deadline has passed. Refund cannot be processed.'], 400);
             }
 
             $refundUrl = 'https://api.sandbox.midtrans.com/v2/' . $orderId . '/refund';

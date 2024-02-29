@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>TheEvent Bootstrap Template - Index</title>
+  <title>Travelize</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -281,7 +281,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form method="POST" action="/booking">
+            <form method="post" action="/booking">
               @method('post')
               @csrf
               <div class="form-group"  style="display: none;">

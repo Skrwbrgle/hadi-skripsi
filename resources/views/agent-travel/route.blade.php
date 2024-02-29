@@ -63,7 +63,7 @@
                             <td>
                                 <a href="#">{{ $rute->id }}</a>
                             </td>
-                            <td><span class="invoice-amount">Rp {{ number_format($rute->tarif, 0, ',', '.') }}</span></td>
+                            <td><span class="invoice-amount">Rp{{ number_format($rute->tarif, 0, ',', '.') }}</span></td>
                             <td><small>{{ \Carbon\Carbon::parse($rute->jam_keberangkatan)->format('h:i A') }}</small></td>
                             <td><span class="invoice-customer">{{ $rute->rute }}</span></td>
                             <td>

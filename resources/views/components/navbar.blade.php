@@ -9,8 +9,8 @@
                         <ul class="collapsible collapsible-sub" data-collapsible="accordion">
                             <li class="active"><a href="/admin"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">Agent Travels</span></a>
                             </li>
-                            <li class="active"><a href="/admin/customers"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">Customers</span></a>
-                            </li>
+                            {{-- <li class="active"><a href="/admin/customers"><i class="material-icons">radio_button_unchecked</i><span data-i18n="Page Blank">Customers</span></a>
+                            </li> --}}
                         </ul>
                     </div>
                 </li>

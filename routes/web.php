@@ -33,7 +33,7 @@ Route::get('/register', [RegisterController::class, 'index'])->middleware('guest
 Route::post('/login', [LoginController::class, 'authenticate'])->middleware('guest');
 Route::post('/register', [RegisterController::class, 'create'])->middleware('guest');
 Route::post('/search', [RuteController::class, 'search'])->middleware('guest');
-Route::post('/booking', [TransaksiController::class, 'create'])->middleware('guest');
+Route::post('/booking', [TransaksiController::class, 'order'])->middleware('guest');
 Route::post('/refund', [TransaksiController::class, 'refund'])->middleware('guest');
 // Route::post('/send-email', [GuestController::class, 'sendEmail'])->middleware('guest');
 
@@ -55,3 +55,4 @@ Route::post('/agent-travel/routes/create', [RuteController::class, 'create'])->m
 Route::put('/agent-travel/routes/publish/{rute}', [RuteController::class, 'update'])->middleware('agent_travel');
 Route::delete('/agent-travel/routes/delete/{rute}', [RuteController::class, 'destroy'])->middleware('agent_travel');
 Route::get('/agent-travel/invoice', [InvoiceController::class, 'index'])->middleware('agent_travel');
+Route::delete('/agent-travel/invoice/delete/{pembayaran}', [InvoiceController::class, 'delete'])->middleware('agent_travel');

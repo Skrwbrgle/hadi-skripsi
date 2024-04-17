@@ -19,18 +19,19 @@ class GuestController extends Controller
 
         foreach ($routes as $route) {
             $parts = explode(' - ', $route);
-            $city = $parts[0]; // Nama kota pertama
+            $city1 = strtolower($parts[0]); // Nama kota pertama
+            $city2 = strtolower($parts[1]); // Nama kota kedua
 
-            // Memastikan nama kota hanya ditambahkan sekali
-            if (!in_array($city, $cityMapping)) {
-                $cityMapping[] = $city;
+            // Memastikan nama kota hanya ditambahkan sekali, tanpa memperdulikan huruf besar/kecil
+            if (!in_array($city1, $cityMapping)) {
+                $cityMapping[] = ucwords($city1); // Mengonversi huruf pertama menjadi huruf besar
             }
-            if (!in_array($parts[1], $cityMapping)) {
-                $cityMapping[] = $parts[1];
+
+            if (!in_array($city2, $cityMapping)) {
+                $cityMapping[] = ucwords($city2);
             }
         }
-
-        // $ruteString = implode(', ', $cityMapping);
+        $cityMapping = array_unique($cityMapping);
 
         return view('customer.index', [
             "rute" => $cityMapping,

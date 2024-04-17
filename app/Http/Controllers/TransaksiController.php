@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TransaksiController extends Controller
@@ -45,6 +46,26 @@ class TransaksiController extends Controller
                 'rute_id' => 'required|integer',
                 'tanggal' => 'required|date',
             ]);
+
+            // Validasi kouta pemesanan start
+            $transactionsOnDate = DB::table('transaksis')
+                ->where('tanggal', $validatedData['tanggal'])
+                ->where('rute_id', $validatedData['rute_id'])
+                ->get();
+
+            $kouta = Rute::where('id', $validatedData['rute_id'])->value('kouta');
+
+            // Hitung jumlah total tiket pada tanggal tersebut
+            $totalTicketsOnDate = $transactionsOnDate->sum('jumlah_penumpang');
+
+            // Tentukan batasan jumlah order tiket per tanggal
+            $maxTicketsPerDate = $kouta ?? 5;
+
+            // dd($transactionsOnDate, $totalTicketsOnDate, $maxTicketsPerDate);
+            if ($totalTicketsOnDate + $validatedData['jumlah_penumpang'] > $maxTicketsPerDate) {
+                return redirect('/')->with('error', 'Sorry, maximum ticket quota exceeded for this date.');
+            }
+            // Validasi kouta pemesanan end
 
             $currentDate = Carbon::today()->startOfDay();
             $selectedDate = Carbon::createFromFormat('Y-m-d', $validatedData['tanggal'])->startOfDay();
@@ -114,61 +135,61 @@ class TransaksiController extends Controller
             ]);
 
             // push whatsapp
-            // $target = $transaksi->no_telepon;
-            // $tokenFonnte = config('app.token_fonnte');
-            // $curl = curl_init();
+            $target = $transaksi->no_telepon;
+            $tokenFonnte = config('app.token_fonnte');
+            $curl = curl_init();
 
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => 'https://api.fonnte.com/send',
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'POST',
-            //     CURLOPT_POSTFIELDS => array(
-            //         'target' => $target,
-            //         'message' => 'Hi ' . $transaksi->nama . '!, kami dari TRAVELIZE silahkan melakukan pembayaran tiket anda melalui link berikut ini, Terimakasih 🙏🙏 :' . $snapToken->redirect_url,
-            //         'countryCode' => '62', //optional
-            //     ),
-            //     CURLOPT_HTTPHEADER => array(
-            //         "Authorization: $tokenFonnte" //change TOKEN to your actual token
-            //     ),
-            // ));
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.fonnte.com/send',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'target' => $target,
+                    'message' => 'Hi ' . $transaksi->nama . '!, kami dari TRAVELIZE silahkan melakukan pembayaran tiket anda melalui link berikut ini, Terimakasih 🙏🙏 :' . $snapToken->redirect_url,
+                    'countryCode' => '62', //optional
+                ),
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: $tokenFonnte" //change TOKEN to your actual token
+                ),
+            ));
 
-            // $response = curl_exec($curl);
+            $response = curl_exec($curl);
 
-            // curl_close($curl);
+            curl_close($curl);
             // echo $response;
 
-            $BASE_URL = config('app.infobip_base_url');
-            $API_KEY = config('app.infobip_api_key');
-            $RECIPIENT = $transaksi->no_telepon;
+            // $BASE_URL = config('app.infobip_base_url');
+            // $API_KEY = config('app.infobip_api_key');
+            // $RECIPIENT = $transaksi->no_telepon;
 
-            $client = new Client([
-                'base_uri' => $BASE_URL,
-                'headers' => [
-                    'Authorization' => "App " . $API_KEY,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
-            ]);
+            // $client = new Client([
+            //     'base_uri' => $BASE_URL,
+            //     'headers' => [
+            //         'Authorization' => "App " . $API_KEY,
+            //         'Content-Type' => 'application/json',
+            //         'Accept' => 'application/json',
+            //     ]
+            // ]);
 
-            $response = $client->request(
-                'POST',
-                'whatsapp/1/message/text',
-                [
-                    RequestOptions::JSON => [
-                        'from' => '447860099299',
-                        'to' => $RECIPIENT,
-                        'content' => [
-                            'text' => 'Hi ' . $transaksi->nama . '!, kami dari TRAVELIZE silahkan melakukan pembayaran tiket anda melalui link berikut ini, Terimakasih 🙏🙏 :' . $snapToken->redirect_url
-                        ],
-                        'callbackData' => 'Callback data',
-                    ],
-                ]
-            );
+            // $response = $client->request(
+            //     'POST',
+            //     'whatsapp/1/message/text',
+            //     [
+            //         RequestOptions::JSON => [
+            //             'from' => '447860099299',
+            //             'to' => $RECIPIENT,
+            //             'content' => [
+            //                 'text' => 'Hi ' . $transaksi->nama . '!, kami dari TRAVELIZE silahkan melakukan pembayaran tiket anda melalui link berikut ini, Terimakasih 🙏🙏 :' . $snapToken->redirect_url
+            //             ],
+            //             'callbackData' => 'Callback data',
+            //         ],
+            //     ]
+            // );
 
             // echo ("HTTP code: " . $response->getStatusCode() . PHP_EOL);
             // echo ("Response body: " . $response->getBody()->getContents() . PHP_EOL);
@@ -247,71 +268,71 @@ class TransaksiController extends Controller
             $mpdf->Output($pdfFilePath, \Mpdf\Output\Destination::FILE);
 
             // Send E-Ticket ke whatsapp
-            // $target = $order->transaksi->no_telepon;
-            // $tokenFonnte = config('app.token_fonnte');
-            // // dd($pdfUrl);
-            // $curl = curl_init();
+            $target = $order->transaksi->no_telepon;
+            $tokenFonnte = config('app.token_fonnte');
+            // dd($pdfUrl);
+            $curl = curl_init();
 
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => 'https://api.fonnte.com/send',
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'POST',
-            //     CURLOPT_POSTFIELDS => array(
-            //         'target' => $target,
-            //         'message' => 'Ini pembelian E-Ticket anda dari kami Travelize. silahkan download ' . $pdfUrl,
-            //         'url' => $pdfUrl,
-            //         'filename' => $pdfFileName, //optional, only works on file and audio
-            //         'countryCode' => '62', //optional
-            //     ),
-            //     CURLOPT_HTTPHEADER => array(
-            //         "Authorization: $tokenFonnte" //change TOKEN to your actual token
-            //     ),
-            // ));
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.fonnte.com/send',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'target' => $target,
+                    'message' => 'Ini pembelian E-Ticket anda dari kami Travelize. silahkan download ' . $pdfUrl,
+                    'url' => $pdfUrl,
+                    'filename' => $pdfFileName, //optional, only works on file and audio
+                    'countryCode' => '62', //optional
+                ),
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: $tokenFonnte" //change TOKEN to your actual token
+                ),
+            ));
 
-            // $response = curl_exec($curl);
+            $response = curl_exec($curl);
 
-            // curl_close($curl);
+            curl_close($curl);
 
-            $BASE_URL = config('app.infobip_base_url');
-            $API_KEY = config('app.infobip_api_key');
-            $RECIPIENT = $order->transaksi->no_telepon;
+            // $BASE_URL = config('app.infobip_base_url');
+            // $API_KEY = config('app.infobip_api_key');
+            // $RECIPIENT = $order->transaksi->no_telepon;
 
-            $client = new Client([
-                'base_uri' => $BASE_URL,
-                'headers' => [
-                    'Authorization' => "App " . $API_KEY,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
-            ]);
+            // $client = new Client([
+            //     'base_uri' => $BASE_URL,
+            //     'headers' => [
+            //         'Authorization' => "App " . $API_KEY,
+            //         'Content-Type' => 'application/json',
+            //         'Accept' => 'application/json',
+            //     ]
+            // ]);
 
             // return $pdfUrl;
 
-            $response = $client->request(
-                'POST',
-                'whatsapp/1/message/document',
-                [
-                    RequestOptions::JSON => [
-                        'from' => '447860099299',
-                        'to' => $RECIPIENT,
-                        'content' => [
-                            'mediaUrl' => $pdfUrl,
-                            'caption' => 'Ini pembelian E-Ticket anda dari kami Travelize',
-                            'filename' => $pdfFileName,
-                        ],
-                        'callbackData' => 'Callback data',
-                    ],
-                ]
-            );
+            // $response = $client->request(
+            //     'POST',
+            //     'whatsapp/1/message/document',
+            //     [
+            //         RequestOptions::JSON => [
+            //             'from' => '447860099299',
+            //             'to' => $RECIPIENT,
+            //             'content' => [
+            //                 'mediaUrl' => $pdfUrl,
+            //                 'caption' => 'Ini pembelian E-Ticket anda dari kami Travelize',
+            //                 'filename' => $pdfFileName,
+            //             ],
+            //             'callbackData' => 'Callback data',
+            //         ],
+            //     ]
+            // );
             // return $response->getBody()->getContents();
-            // $data_res = json_decode($response, true);
-            // return response()->json([$data_res['detail'], $pdfUrl], 200);
-            return response()->json([$response->getBody()->getContents(), $pdfUrl], 200);
+            $data_res = json_decode($response, true);
+            return response()->json([$data_res['detail'], $pdfUrl], 200);
+            // return response()->json([$response->getBody()->getContents(), $pdfUrl], 200);
         } elseif ($transactionStatus == 'expire') {
             $order->transaksi->delete();
             $order->delete();

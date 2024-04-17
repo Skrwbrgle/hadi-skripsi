@@ -82,7 +82,23 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="input-field col s6">
+                                <div class="input-field col s3">
+                                    {{-- <i class="material-icons prefix">attach_money</i> --}}
+                                    <input id="kouta" name="kouta" type="text" class="validate">
+                                    <label for="kouta">Kouta / Hari</label>
+                                    @error('kouta')
+                                        <div class="card-alert card gradient-45deg-red-pink">
+                                        <div class="card-content white-text">
+                                            <p>
+                                            <i class="material-icons">error</i> DANGER : {{ $message }}</p>
+                                        </div>
+                                        <button type="button" class="close white-text" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="input-field col s3">
                                     <select class="select2 browser-default" name="transportasi">
                                         <option value="">Transportation</option>
                                         <option value="Car">Car</option>

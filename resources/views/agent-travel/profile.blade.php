@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="col s12 m5 quick-action-btns display-flex justify-content-end align-items-center pt-2">
-                    <a href="/admin/users/edit/{{ $user->id }}" class="btn-small btn-light-indigo">Edit</a>
+                    <a href="/agent-travel/edit/{{ $user->id }}" class="btn-small btn-light-indigo">Edit</a>
                     @can('admin')
                         <form id="deleteForm_{{ $user->id }}" action="/admin/users/delete/{{ $user->id }}" method="post" class="{{ $user->is_admin ? 'd-inline ml-3 hide' : 'd-inline ml-3' }}">
                             @method('delete')
@@ -66,7 +66,7 @@
                 <div class="card-content">
                 <div class="row">
                     <div class="col s12">
-                    <table class="striped">
+                      <table class="striped">
                         <tbody>
                             <tr>
                             <td>Registered:</td>

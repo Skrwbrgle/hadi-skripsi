@@ -39,7 +39,7 @@
                     <ul class="dropdown-content" id="profile-dropdown">
                         @auth
                             <li>
-                                <a class="grey-text text-darken-1 gradient-45deg-indigo-purple white-text" href="#">
+                                <a class="grey-text text-darken-1 gradient-45deg-indigo-purple white-text" href="{{ Auth()->user()->is_admin === 1 ? '/admin/users/' : '/agent-travel/profile/'}}{{ Auth()->user()->id }}">
                                     <i class="material-icons white-text">verified_user</i><span class="white-text"> {{ Auth()->user()->username }}</span>
                                 </a>
                             </li>

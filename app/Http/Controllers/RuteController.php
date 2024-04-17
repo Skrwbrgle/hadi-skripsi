@@ -32,9 +32,10 @@ class RuteController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'rute' => 'required|min:3|max:255|unique:rutes',
+            'rute' => 'required|min:3|max:255',
             'jam_keberangkatan' => 'required|min:5|max:255',
             'tarif' => 'required|max:255',
+            'kouta' => 'required|max:255',
             'transportasi' => 'required|min:3|max:255',
             'user_id' => 'required',
         ]);

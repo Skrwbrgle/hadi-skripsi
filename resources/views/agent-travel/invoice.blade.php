@@ -150,7 +150,7 @@
                             <span id="agentsi_name">Clevision PVT. LTD.</span>
                         </div>
                         <div class="invoice-address">
-                            <span id="agentsi_address">9205 Whitemarsh Street New York, NY 10002</span>
+                            <span id="agentsi_address">{{ isset($invoice) ? $invoice['transaksi']->rute['user']->alamat : ''  }}</span>
                         </div>
                         <div class="invoice-address">
                             <span id="agentsi_username">hello@clevision.net</span>

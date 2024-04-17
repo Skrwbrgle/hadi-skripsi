@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -54,6 +56,11 @@ class UserController extends Controller
         return view('admin/userView', ["user" => $user]);
     }
 
+    public function profile(User $user)
+    {
+        return view('agent-travel/profile', ["user" => $user]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -62,7 +69,11 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin/userEdit', ["title" => "Edit Customer", "user" => $user]);
+        if (Auth()->user()->is_admin === 1) {
+            return view('admin/userEdit', ["title" => "Edit User", "user" => $user]);
+        } else if (Auth()->user()->is_admin === 0) {
+            return view('agent-travel/edit', ["title" => "Edit Profile", "user" => $user]);
+        }
     }
 
     /**
@@ -94,7 +105,11 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return redirect('/admin/users/' . $user->id)->with('success', $user->nama_agen_travel . ' has been updated!');
+        if (Auth()->user()->is_admin  === 1) {
+            return redirect('/admin/users/' . $user->id)->with('success', $user->nama_agen_travel . ' has been updated!');
+        } else if (Auth()->user()->is_admin  === 0) {
+            return redirect('/agent-travel/profile/' . $user->id)->with('success', $user->nama_agen_travel . ' has been updated!');
+        }
     }
 
     /**
@@ -105,7 +120,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        User::destroy($user->id);
+        $user->delete();
+        $user->rute()->delete();
         return redirect('/admin')->with('success', $user->nama_agen_travel . ' has been deleted!');
     }
 }

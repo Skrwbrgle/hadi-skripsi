@@ -50,6 +50,9 @@ Route::put('/admin/customers/update/{penumpang}', [PenumpangController::class, '
 
 // AGENT TRAVEL ROUTES
 Route::get('/agent-travel', [RuteController::class, 'index'])->middleware('agent_travel');
+Route::get('/agent-travel/profile/{user}', [UserController::class, 'profile'])->middleware('agent_travel');
+Route::get('/agent-travel/edit/{user}', [UserController::class, 'edit'])->middleware('agent_travel');
+Route::put('/agent-travel/update/{user}', [UserController::class, 'update'])->middleware('agent_travel');
 Route::get('/agent-travel/inputForm', [RuteController::class, 'show'])->middleware('agent_travel');
 Route::post('/agent-travel/routes/create', [RuteController::class, 'create'])->middleware('agent_travel');
 Route::put('/agent-travel/routes/publish/{rute}', [RuteController::class, 'update'])->middleware('agent_travel');

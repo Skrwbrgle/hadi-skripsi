@@ -18,7 +18,7 @@ class InvoiceController extends Controller
                 $query->where('id', $user->id);
             })->get();
 
-            // return response()->json($transaksi);
+            // return $transaksi;
 
             return view('agent-travel/invoice', [
                 "title" => "Travel Agents",
